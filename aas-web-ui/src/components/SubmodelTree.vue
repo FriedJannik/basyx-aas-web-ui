@@ -90,6 +90,18 @@
                                             </v-list-item>
                                         </template>
                                         <span>Create a new Submodel</span>
+                                    </v-tooltip>
+                                    <!-- Open SM dialog -->
+                                    <v-tooltip open-delay="600" location="end">
+                                        <template #activator="{ props }">
+                                            <v-list-item slim v-bind="props" @click="openInsertSubmodelTemplateDialog()">
+                                                <template #prepend>
+                                                    <v-icon size="small">mdi-plus</v-icon>
+                                                </template>
+                                                Insert Submodel Template
+                                            </v-list-item>
+                                        </template>
+                                        <span>Create a new Submodel</span>
                                     </v-tooltip></v-list
                                 >
                             </v-sheet>
@@ -169,6 +181,7 @@
     <SubmodelForm v-model="editDialog" :new-sm="newSubmodel" :submodel="submodelToEdit"></SubmodelForm>
     <!-- Dialog for deleting SM/SME -->
     <DeleteDialog v-model="deleteDialog" :element="elementToDelete"></DeleteDialog>
+    <SubmodelTemplateForm v-model="insertDialog"></SubmodelTemplateForm>
 </template>
 
 <script lang="ts" setup>
@@ -200,6 +213,7 @@
     const propertyDialog = ref(false); // Variable to store if the PropertyForm Dialog should be shown
     const smcDialog = ref(false); // Variable to store if the PropertyForm Dialog should be shown
     const editDialog = ref(false); // Variable to store if the Edit Dialog should be shown
+    const insertDialog = ref(false); // Variable to store if the Edit Dialog should be shown
     const newProperty = ref(false); // Variable to store if a new Property should be created
     const newSMC = ref(false); // Variable to store if a new SubmodelElementCollection should be created
     const newSubmodel = ref(false); // Variable to store if a new Submodel should be created
@@ -355,6 +369,10 @@
         if (!createNew && submodel) {
             submodelToEdit.value = submodel;
         }
+    }
+
+    function openInsertSubmodelTemplateDialog(): void {
+        insertDialog.value = true;
     }
 
     function openDeleteDialog(element: any): void {
