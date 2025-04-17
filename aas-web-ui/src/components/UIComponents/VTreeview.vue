@@ -117,6 +117,14 @@
                                     </template>
                                     <v-list-item-subtitle>Delete Submodel</v-list-item-subtitle>
                                 </v-list-item>
+                                <v-divider></v-divider>
+                                <!-- Add missing required elements -->
+                                <v-list-item v-if="isSubmodelTemplate(item.semanticId.keys[0].value)" @click="addMissingRequiredElements(item)">
+                                    <template #prepend>
+                                        <v-icon size="x-small">mdi-plus</v-icon>
+                                    </template>
+                                    <v-list-item-subtitle>Add Missing Required Elements For Template</v-list-item-subtitle>
+                                </v-list-item>
                             </v-list>
                         </v-sheet>
                     </v-menu>
@@ -195,6 +203,7 @@
     import { useClipboardUtil } from '@/composables/ClipboardUtil';
     import { useAASStore } from '@/store/AASDataStore';
     import { useNavigationStore } from '@/store/NavigationStore';
+    import { getMissingRequiredElements, isSubmodelTemplate } from '@/utils/AAS/SubmodelTemplateUtils';
 
     // Vue Router
     const route = useRoute();
@@ -277,5 +286,11 @@
             return false;
         }
         return selectedNode.value.path === smOrSme.path;
+    }
+
+    function addMissingRequiredElements(item: any): void {
+        getMissingRequiredElements(item).then((missingElements)=>{
+            //
+        });
     }
 </script>

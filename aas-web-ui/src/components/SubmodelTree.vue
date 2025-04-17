@@ -192,6 +192,7 @@
     import { useAASStore } from '@/store/AASDataStore';
     import { useEnvStore } from '@/store/EnvironmentStore';
     import { useNavigationStore } from '@/store/NavigationStore';
+    import { getOptionalElements, getRequiredElements } from '@/utils/AAS/SubmodelTemplateUtils';
     import { isEmptyString } from '@/utils/StringUtils';
 
     // Vue Router
@@ -268,6 +269,12 @@
 
     onMounted(() => {
         initialize();
+        getOptionalElements('https://admin-shell.io/idta/nameplate/3/0/Nameplate').then(elements=>{
+            console.log(elements);
+        });
+        getRequiredElements('https://admin-shell.io/idta/nameplate/3/0/Nameplate').then(elements=>{
+            console.log(elements);
+        })
     });
 
     async function initialize(): Promise<void> {

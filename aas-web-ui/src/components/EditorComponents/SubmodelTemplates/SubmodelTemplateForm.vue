@@ -18,10 +18,11 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn @click="closeDialog">Cancel</v-btn>
-                <v-btn color="primary" :disabled="selectedST == ''" @click="createST">Next</v-btn>
+                <v-btn color="primary" :disabled="selectedST == ''" @click="openIdEditor">Next</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
+    <ChangeIdForm v-model="customIdDialog" @close-id-dialog="closeIdEditor" @create-s-t="createST"></ChangeIdForm>
 </template>
 
 <script setup lang="ts">
@@ -33,16 +34,18 @@
     import { useAASStore } from '@/store/AASDataStore';
     import { useNavigationStore } from '@/store/NavigationStore';
     import { extractEndpointHref } from '@/utils/AAS/DescriptorUtils';
+    import { smts } from '@/utils/AAS/SubmodelTemplateUtils';
     import { base64Encode } from '@/utils/EncodeDecodeUtils';
-    import { getSubmodelTemplateMapping, SubmodelTemplateMetadata } from '@/utils/SubmodelTemplateUtils';
+    import ChangeIdForm from './ChangeIdForm.vue';
 
     const client = useSMRepositoryClient();
     const aasStore = useAASStore();
     const router = useRouter();
     const { putAas } = useAASRepositoryClient();
     const navigationStore = useNavigationStore();
-    const submodelTemplates: SubmodelTemplateMetadata[] = getSubmodelTemplateMapping();
+    const submodelTemplates: any[] = smts;
     const insertSTDialog = ref(false);
+    const customIdDialog = ref(false);
     const selectedAAS = computed(() => aasStore.getSelectedAAS); // Get the selected AAS from Store
     const submodelRepoUrl = computed(() => navigationStore.getSubmodelRepoURL);
     const props = defineProps<{
@@ -53,9 +56,10 @@
     }>();
     const availableST = ref<string[]>([]);
     submodelTemplates.forEach((submodelTemplate) => {
-        availableST.value.push(submodelTemplate.id);
+        if (Object.prototype.hasOwnProperty.call(submodelTemplate, 'fileName'))
+            availableST.value.push(`${submodelTemplate.name} ${submodelTemplate.version}`);
     });
-    const selectedST = ref('Digital Nameplate 3.0');
+    const selectedST = ref(`${submodelTemplates[1].name} ${submodelTemplates[1].version}`);
     watch(
         () => props.modelValue,
         (value) => {
@@ -73,11 +77,11 @@
         insertSTDialog.value = false;
     }
 
-    async function createST(): Promise<void> {
+    async function createST(id: string): Promise<void> {
         if (selectedST.value == '') return;
         //load json file
-        const metaData: SubmodelTemplateMetadata | undefined = getSubmodelTemplateMapping().find((mapping) => {
-            return mapping.id === selectedST.value;
+        const metaData: any = submodelTemplates.find((mapping) => {
+            return mapping.name + ' ' + mapping.version === selectedST.value;
         });
         if (!metaData) {
             console.error('Error while loading Submodel Template ' + selectedST.value);
@@ -85,22 +89,22 @@
         }
         const data = await fetch('/SubmodelTemplates/' + metaData.fileName);
         const json = await data.json();
-        json.submodels.forEach(async (submodel: string) => {
-            const instanceOrError = jsonization.submodelFromJsonable(submodel);
-            if (instanceOrError.error != null) {
-                console.error('Error while deserializing Submodel for Submodel Template ', selectedST.value);
-                return;
-            }
-            const submodelObject = instanceOrError.mustValue();
-            client.postSubmodel(submodelObject);
-            // Add Submodel Reference to AAS
-            await addSubmodelReferenceToAas(submodelObject);
-            // Fetch and dispatch Submodel
-            const path = submodelRepoUrl.value + '/' + base64Encode(submodelObject.id);
-            const aasEndpoint = extractEndpointHref(selectedAAS.value, 'AAS-3.0');
-            router.push({ query: { aas: aasEndpoint, path: path } });
-            navigationStore.dispatchTriggerTreeviewReload();
-        });
+        const submodel = json.submodels[0];
+        submodel.id = id;
+        const instanceOrError = jsonization.submodelFromJsonable(submodel);
+        if (instanceOrError.error != null) {
+            console.error('Error while deserializing Submodel for Submodel Template ', selectedST.value);
+            return;
+        }
+        const submodelObject = instanceOrError.mustValue();
+        client.postSubmodel(submodelObject);
+        // Add Submodel Reference to AAS
+        await addSubmodelReferenceToAas(submodelObject);
+        // Fetch and dispatch Submodel
+        const path = submodelRepoUrl.value + '/' + base64Encode(submodelObject.id);
+        const aasEndpoint = extractEndpointHref(selectedAAS.value, 'AAS-3.0');
+        router.push({ query: { aas: aasEndpoint, path: path } });
+        navigationStore.dispatchTriggerTreeviewReload();
         closeDialog();
     }
 
@@ -129,5 +133,13 @@
 
         // Update AAS in Store
         aasStore.dispatchSelectedAAS(localAAS);
+    }
+
+    function openIdEditor(): void {
+        customIdDialog.value = true;
+    }
+
+    function closeIdEditor(): void {
+        customIdDialog.value = false;
     }
 </script>
