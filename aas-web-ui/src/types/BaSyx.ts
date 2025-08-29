@@ -16,4 +16,5 @@ export type BaSyxComponentKey =
     | 'SubmodelRegistry'
     | 'AASRepo'
     | 'SubmodelRepo'
-    | 'ConceptDescriptionRepo';
+    | 'ConceptDescriptionRepo'
+    | 'SecuritySubmodelRepo';

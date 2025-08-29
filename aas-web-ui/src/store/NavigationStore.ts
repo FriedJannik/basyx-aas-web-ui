@@ -33,6 +33,7 @@ export const useNavigationStore = defineStore('navigationStore', () => {
     const EnvAASRepoPath = computed(() => envStore.getEnvAASRepoPath);
     const EnvSubmodelRepoPath = computed(() => envStore.getEnvSubmodelRepoPath);
     const EnvConceptDescriptionRepoPath = computed(() => envStore.getEnvConceptDescriptionRepoPath);
+    const EnvSecuritySubmodelRepoPath = computed(() => envStore.getEnvSecuritySubmodelRepoPath);
 
     // States
     const drawerState = ref(true);
@@ -42,6 +43,7 @@ export const useNavigationStore = defineStore('navigationStore', () => {
     const AASRepoURL = ref('');
     const SubmodelRepoURL = ref('');
     const ConceptDescriptionRepoURL = ref('');
+    const SecuritySubmodelRepoURL = ref('');
     const Snackbar = ref<SnackbarType>({} as SnackbarType);
     const autoSync = ref<AutoSyncType>({ state: false, interval: 3000 } as AutoSyncType);
     const statusCheck = ref<StatusCheckType>({ state: false, interval: 10000 } as StatusCheckType);
@@ -108,6 +110,15 @@ export const useNavigationStore = defineStore('navigationStore', () => {
             connect: () => connectComponent('ConceptDescriptionRepo'),
             label: 'Concept Description Repository URL',
             pathCheck: cdRepoEndpointPath,
+            additionalParams: '?limit=1',
+        },
+        SecuritySubmodelRepo: {
+            url: SecuritySubmodelRepoURL,
+            loading: ref(false),
+            connected: ref(null),
+            connect: () => connectComponent('SecuritySubmodelRepo'),
+            label: 'Security Submodel Repository URL',
+            pathCheck: smRepoEndpointPath,
             additionalParams: '?limit=1',
         },
     });
@@ -251,6 +262,9 @@ export const useNavigationStore = defineStore('navigationStore', () => {
                         break;
                     case 'ConceptDescriptionRepo':
                         envPath = EnvConceptDescriptionRepoPath.value;
+                        break;
+                    case 'SecuritySubmodelRepo':
+                        envPath = EnvSecuritySubmodelRepoPath.value;
                         break;
                     default:
                         break;
