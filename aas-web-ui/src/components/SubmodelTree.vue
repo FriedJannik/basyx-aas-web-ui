@@ -229,6 +229,7 @@
     import { useReferableUtils } from '@/composables/AAS/ReferableUtils';
     import { useSMHandling } from '@/composables/AAS/SMHandling';
     import { useAASStore } from '@/store/AASDataStore';
+    import { useAuthStore } from '@/store/AuthStore';
     import { useEnvStore } from '@/store/EnvironmentStore';
     import { useNavigationStore } from '@/store/NavigationStore';
     import { isEmptyString } from '@/utils/StringUtils';
@@ -245,6 +246,7 @@
     const navigationStore = useNavigationStore();
     const aasStore = useAASStore();
     const envStore = useEnvStore();
+    const authStore = useAuthStore();
 
     // Data
     const submodelTree = ref([] as Array<any>) as Ref<Array<any>>; // Submodel Treeview Data
@@ -284,6 +286,7 @@
     const singleAas = computed(() => envStore.getSingleAas); // Get the single AAS state from the Store
     const editorMode = computed(() => ['AASEditor', 'SMEditor'].includes(route.name as string));
     const triggerTreeviewReload = computed(() => navigationStore.getTriggerTreeviewReload); // Reload the Treeview
+    const isSecuritySubmodel = computed(() => authStore.getAuthEnabled && authStore.getEditSecuritySubmodel);
 
     // Watchers
     watch(
@@ -321,6 +324,13 @@
         }
     );
 
+    watch(
+        () => isSecuritySubmodel.value,
+        () => {
+            initialize();
+        }
+    );
+
     onMounted(() => {
         initialize();
     });
@@ -341,7 +351,7 @@
             let submodels: Array<any> = [];
 
             if (['SMEditor', 'SMViewer'].includes(route.name as string)) {
-                submodels = await fetchSmList();
+                submodels = await fetchSmList(isSecuritySubmodel.value);
             } else {
                 submodels = await fetchAasSmListById(selectedAAS.value.id);
             }

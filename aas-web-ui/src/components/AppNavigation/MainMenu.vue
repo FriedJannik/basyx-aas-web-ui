@@ -5,99 +5,124 @@
                 <v-row>
                     <!-- Main Menu Items -->
                     <v-col cols="12" sm="7">
-                        <v-list-item
-                            class="py-2"
-                            :active="false"
-                            nav
-                            :border="isActiveRoutePath('/')"
-                            subtitle="View Asset Administration Shells"
-                            title="AAS Viewer"
-                            :to="isActiveRoutePath('/') ? '' : '/'"
-                            @click="closeMenu">
-                            <template #prepend>
-                                <v-avatar color="surface-light" icon="custom:aasIcon" rounded>
-                                    <v-icon color="medium-emphasis" />
-                                </v-avatar>
-                            </template>
-                        </v-list-item>
-                        <v-list-item
-                            v-if="allowEditing"
-                            class="mt-3 py-2"
-                            :active="false"
-                            nav
-                            :border="isActiveRoutePath('/aaseditor')"
-                            subtitle="Edit Asset Administration Shells"
-                            title="AAS Editor"
-                            :to="isActiveRoutePath('/aaseditor') ? '' : '/aaseditor'"
-                            @click="closeMenu">
-                            <template #prepend>
-                                <v-avatar color="surface-light" icon="mdi-pencil" rounded>
-                                    <v-icon color="medium-emphasis" />
-                                </v-avatar>
-                            </template>
-                        </v-list-item>
-                        <v-list-item
-                            class="mt-3 py-2"
-                            nav
-                            :active="false"
-                            :border="isActiveRoutePath('/aassmviewer')"
-                            subtitle="View Submodel Visualizations of Asset Administration Shells"
-                            title="AAS SM Visualizations"
-                            :to="isActiveRoutePath('/aassmviewer') ? '' : '/aassmviewer'"
-                            @click="closeMenu">
-                            <template #prepend>
-                                <v-avatar color="surface-light" icon="mdi-group" rounded>
-                                    <v-icon color="medium-emphasis" />
-                                </v-avatar>
-                            </template>
-                        </v-list-item>
-                        <v-list-item
-                            class="mt-3 py-2"
-                            nav
-                            :active="false"
-                            :border="isActiveRoutePath('/smviewer')"
-                            subtitle="View Submodels"
-                            title="SM Viewer"
-                            :to="isActiveRoutePath('/smviewer') ? '' : '/smviewer'"
-                            @click="closeMenu">
-                            <template #prepend>
-                                <v-avatar color="surface-light" icon="mdi-ungroup" rounded>
-                                    <v-icon color="medium-emphasis" />
-                                </v-avatar>
-                            </template>
-                        </v-list-item>
-                        <v-list-item
-                            v-if="allowEditing"
-                            class="mt-3 py-2"
-                            :active="false"
-                            nav
-                            :border="isActiveRoutePath('/smeditor')"
-                            subtitle="Edit Submodels"
-                            title="SM Editor"
-                            :to="isActiveRoutePath('/smeditor') ? '' : '/smeditor'"
-                            @click="closeMenu">
-                            <template #prepend>
-                                <v-avatar color="surface-light" icon="mdi-pencil" rounded>
-                                    <v-icon color="medium-emphasis" />
-                                </v-avatar>
-                            </template>
-                        </v-list-item>
-                        <v-list-item
-                            v-if="selectedNode && Object.keys(selectedNode).length > 0"
-                            class="mt-3 py-2"
-                            nav
-                            :active="false"
-                            :border="isActiveRoutePath('/visu')"
-                            subtitle="Visualize Submodels/Submodel Elements"
-                            title="Visualization"
-                            :to="isActiveRoutePath('/visu') ? '' : '/visu'"
-                            @click="closeMenu">
-                            <template #prepend>
-                                <v-avatar color="surface-light" icon="mdi-chart-line" rounded>
-                                    <v-icon color="medium-emphasis" />
-                                </v-avatar>
-                            </template>
-                        </v-list-item>
+                        <v-tabs color="primary" grow v-model="selectedTab" class="mb-3">
+                            <v-tab class="text-none" text="AAS" value="aas"></v-tab>
+                            <v-tab class="text-none" text="Submodels" value="sm"></v-tab>
+                            <v-tab class="text-none" text="Security" value="sec"></v-tab>
+                        </v-tabs>
+                        <div v-if="selectedTab === 'aas'">
+                            <v-list-item
+                                class="py-2"
+                                :active="false"
+                                nav
+                                :border="isActiveRoutePath('/')"
+                                subtitle="View Asset Administration Shells"
+                                title="AAS Viewer"
+                                :to="isActiveRoutePath('/') ? '' : '/'"
+                                @click="closeMenu">
+                                <template #prepend>
+                                    <v-avatar color="surface-light" icon="custom:aasIcon" rounded>
+                                        <v-icon color="medium-emphasis" />
+                                    </v-avatar>
+                                </template>
+                            </v-list-item>
+                            <v-list-item
+                                v-if="allowEditing"
+                                class="mt-3 py-2"
+                                :active="false"
+                                nav
+                                :border="isActiveRoutePath('/aaseditor')"
+                                subtitle="Edit Asset Administration Shells"
+                                title="AAS Editor"
+                                :to="isActiveRoutePath('/aaseditor') ? '' : '/aaseditor'"
+                                @click="closeMenu">
+                                <template #prepend>
+                                    <v-avatar color="surface-light" icon="mdi-pencil" rounded>
+                                        <v-icon color="medium-emphasis" />
+                                    </v-avatar>
+                                </template>
+                            </v-list-item>
+                            <v-list-item
+                                class="mt-3 py-2"
+                                nav
+                                :active="false"
+                                :border="isActiveRoutePath('/aassmviewer')"
+                                subtitle="View Submodel Visualizations of Asset Administration Shells"
+                                title="AAS SM Visualizations"
+                                :to="isActiveRoutePath('/aassmviewer') ? '' : '/aassmviewer'"
+                                @click="closeMenu">
+                                <template #prepend>
+                                    <v-avatar color="surface-light" icon="mdi-group" rounded>
+                                        <v-icon color="medium-emphasis" />
+                                    </v-avatar>
+                                </template>
+                            </v-list-item>
+                        </div>
+                        <div v-if="selectedTab === 'sm'">
+                            <v-list-item
+                                class="py-2"
+                                nav
+                                :active="false"
+                                :border="isActiveRoutePath('/smviewer')"
+                                subtitle="View Submodels"
+                                title="SM Viewer"
+                                :to="isActiveRoutePath('/smviewer') ? '' : '/smviewer'"
+                                @click="closeMenu">
+                                <template #prepend>
+                                    <v-avatar color="surface-light" icon="mdi-ungroup" rounded>
+                                        <v-icon color="medium-emphasis" />
+                                    </v-avatar>
+                                </template>
+                            </v-list-item>
+                            <v-list-item
+                                v-if="allowEditing"
+                                class="mt-3 py-2"
+                                :active="false"
+                                nav
+                                :border="isActiveRoutePath('/smeditor')"
+                                subtitle="Edit Submodels"
+                                title="SM Editor"
+                                :to="isActiveRoutePath('/smeditor') ? '' : '/smeditor'"
+                                @click="closeMenu">
+                                <template #prepend>
+                                    <v-avatar color="surface-light" icon="mdi-pencil" rounded>
+                                        <v-icon color="medium-emphasis" />
+                                    </v-avatar>
+                                </template>
+                            </v-list-item>
+                            <v-list-item
+                                v-if="selectedNode && Object.keys(selectedNode).length > 0"
+                                class="mt-3 py-2"
+                                nav
+                                :active="false"
+                                :border="isActiveRoutePath('/visu')"
+                                subtitle="Visualize Submodels/Submodel Elements"
+                                title="Visualization"
+                                :to="isActiveRoutePath('/visu') ? '' : '/visu'"
+                                @click="closeMenu">
+                                <template #prepend>
+                                    <v-avatar color="surface-light" icon="mdi-chart-line" rounded>
+                                        <v-icon color="medium-emphasis" />
+                                    </v-avatar>
+                                </template>
+                            </v-list-item>
+                        </div>
+                        <div v-if="selectedTab === 'sec'">
+                            <v-list-item
+                                class="py-2"
+                                nav
+                                :active="false"
+                                :border="isActiveRoutePath('/smviewer')"
+                                subtitle="View Security Submodels"
+                                title="SM Viewer"
+                                @click="toSecuritySubmodel">
+                                <template #prepend>
+                                    <v-avatar color="surface-light" icon="mdi-ungroup" rounded>
+                                        <v-icon color="medium-emphasis" />
+                                    </v-avatar>
+                                </template>
+                            </v-list-item>
+                        </div>
                     </v-col>
                     <!-- Custom Modules -->
                     <v-col v-if="filteredAndOrderedModuleRoutes.length > 0" cols="12" sm="5" class="pl-3">
@@ -173,7 +198,7 @@
     import type { ComponentPublicInstance } from 'vue';
     import type { RouteRecordRaw } from 'vue-router';
     import { computed, onMounted, Ref, ref } from 'vue';
-    import { useRoute } from 'vue-router';
+    import { useRoute, useRouter } from 'vue-router';
     import { useDashboardHandling } from '@/composables/DashboardHandling';
     import { useAASStore } from '@/store/AASDataStore';
     import { useEnvStore } from '@/store/EnvironmentStore';
@@ -186,6 +211,7 @@
 
     // Vue Router
     const route = useRoute();
+    const router = useRouter();
 
     // Composables
     const { checkDashboardAvailability } = useDashboardHandling();
@@ -194,6 +220,9 @@
     const aasStore = useAASStore();
     const envStore = useEnvStore();
     const navigationStore = useNavigationStore();
+
+    // Reactive State
+    const selectedTab = ref('aas');
 
     // Emit
     const emit = defineEmits<{
@@ -246,6 +275,9 @@
 
     function closeMenu(): void {
         emit('closeMenu');
+        route.query.view = 'SMEView';
+        // remove this from query route.query.securitySMView;
+        delete route.query.securitySMView;
     }
 
     function isActiveRoutePath(routePath: string): boolean {
@@ -271,5 +303,10 @@
                 }
             }, 50);
         }
+    }
+
+    function toSecuritySubmodel(): void {
+        closeMenu()
+        router.push({ path: '/smviewer', query: { ...route.query, securitySMView: true } });
     }
 </script>

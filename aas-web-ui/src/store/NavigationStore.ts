@@ -131,6 +131,7 @@ export const useNavigationStore = defineStore('navigationStore', () => {
     const getAASRepoURL = computed(() => AASRepoURL.value);
     const getSubmodelRepoURL = computed(() => SubmodelRepoURL.value);
     const getConceptDescriptionRepoURL = computed(() => ConceptDescriptionRepoURL.value);
+    const getSecuritySubmodelRepoURL = computed(() => SecuritySubmodelRepoURL.value);
     const getSnackbar = computed(() => Snackbar.value);
     const getAutoSync = computed(() => autoSync.value);
     const getStatusCheck = computed(() => statusCheck.value);
@@ -398,6 +399,7 @@ export const useNavigationStore = defineStore('navigationStore', () => {
         getAASRepoURL,
         getSubmodelRepoURL,
         getConceptDescriptionRepoURL,
+        getSecuritySubmodelRepoURL,
         getSnackbar,
         getAutoSync,
         getStatusCheck,

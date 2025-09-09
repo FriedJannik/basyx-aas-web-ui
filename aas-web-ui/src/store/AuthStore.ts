@@ -10,6 +10,7 @@ export const useAuthStore = defineStore('authStore', () => {
     const keycloak = ref(null as Keycloak | null);
     const refreshIntervalId = ref(undefined as number | undefined);
     const username = ref('' as string | undefined);
+    const editSecuritySubmodel = ref(false);
 
     // Getters
     const getToken = computed(() => token.value);
@@ -19,6 +20,7 @@ export const useAuthStore = defineStore('authStore', () => {
     const getKeycloak = computed(() => keycloak.value);
     const getRefreshIntervalId = computed(() => refreshIntervalId.value);
     const getUsername = computed(() => username.value);
+    const getEditSecuritySubmodel = computed(() => editSecuritySubmodel.value);
 
     // Actions
     function setToken(tokenValue: string | undefined): void {
@@ -49,6 +51,10 @@ export const useAuthStore = defineStore('authStore', () => {
         username.value = usernameValue;
     }
 
+    function setEditSecuritySubmodel(editSecuritySubmodelValue: boolean): void {
+        editSecuritySubmodel.value = editSecuritySubmodelValue;
+    }
+
     return {
         // Getters
         getToken,
@@ -58,6 +64,7 @@ export const useAuthStore = defineStore('authStore', () => {
         getKeycloak,
         getRefreshIntervalId,
         getUsername,
+        getEditSecuritySubmodel,
 
         // Actions
         setToken,
@@ -67,5 +74,6 @@ export const useAuthStore = defineStore('authStore', () => {
         setKeycloak,
         setRefreshIntervalId,
         setUsername,
+        setEditSecuritySubmodel,
     };
 });

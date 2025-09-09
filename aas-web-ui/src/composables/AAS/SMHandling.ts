@@ -52,10 +52,10 @@ export function useSMHandling() {
      * @returns {Promise<Array<any>>} A promise that resolves to an array of SM.
      * An empty array is returned if the request fails or no AAS Descriptors are found.
      */
-    async function fetchSmList(): Promise<Array<any>> {
+    async function fetchSmList(securitySubmodel: boolean = false): Promise<Array<any>> {
         const failResponse = [] as Array<any>;
 
-        let smList = await fetchSmListFromRepo();
+        let smList = await fetchSmListFromRepo(securitySubmodel);
 
         if (!smList || !Array.isArray(smList) || smList.length === 0) return failResponse;
 

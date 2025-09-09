@@ -249,16 +249,18 @@
 <script lang="ts" setup>
     import type { RouteRecordRaw } from 'vue-router';
     import { computed, onMounted, ref, watch } from 'vue';
-    import { useRoute } from 'vue-router';
+    import { useRoute, useRouter } from 'vue-router';
     import { useTheme } from 'vuetify';
     import { useDashboardHandling } from '@/composables/DashboardHandling';
     import { useAASStore } from '@/store/AASDataStore';
+    import { useAuthStore } from '@/store/AuthStore';
     import { useEnvStore } from '@/store/EnvironmentStore';
     import { useNavigationStore } from '@/store/NavigationStore';
     import { AutoSyncType, StatusCheckType } from '@/types/Application';
 
     // Vue Router
     const route = useRoute();
+    const router = useRouter();
 
     // Composables
     const { checkDashboardAvailability } = useDashboardHandling();
@@ -267,6 +269,7 @@
     const navigationStore = useNavigationStore();
     const envStore = useEnvStore();
     const aasStore = useAASStore();
+    const authStore = useAuthStore();
 
     // Vuetify
     const theme = useTheme();
@@ -350,6 +353,15 @@
         }
     );
 
+    watch(
+        () => route.query,
+        () => {
+            if (route.query.securitySMView) {
+                authStore.setEditSecuritySubmodel(route.query.securitySMView === 'true');
+            }
+        }
+    );
+
     onMounted(async () => {
         dashboardAvailable.value = await checkDashboardAvailability();
         applyTheme();
@@ -366,10 +378,6 @@
             navigationStore.dispatchStatusCheck(statusCheckToDispatch);
         }
     });
-
-    function closeSnackbar() {
-        navigationStore.dispatchSnackbar({ status: false });
-    }
 
     function applyTheme() {
         // check the local storage for a saved theme preference

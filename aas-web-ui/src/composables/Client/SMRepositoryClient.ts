@@ -3,6 +3,7 @@ import { jsonization } from '@aas-core-works/aas-core3.0-typescript';
 import { computed } from 'vue';
 import { useIDUtils } from '@/composables/IDUtils';
 import { useRequestHandling } from '@/composables/RequestHandling';
+import { useAuthStore } from '@/store/AuthStore';
 import { useNavigationStore } from '@/store/NavigationStore';
 import { base64Encode } from '@/utils/EncodeDecodeUtils';
 import { stripLastCharacter } from '@/utils/StringUtils';
@@ -10,6 +11,7 @@ import { stripLastCharacter } from '@/utils/StringUtils';
 export function useSMRepositoryClient() {
     // Stores
     const navigationStore = useNavigationStore();
+    const authStore = useAuthStore();
 
     // Composables
     const { getRequest, postRequest, putRequest, deleteRequest } = useRequestHandling();
@@ -19,6 +21,7 @@ export function useSMRepositoryClient() {
 
     // Computed Properties
     const submodelRepoUrl = computed(() => navigationStore.getSubmodelRepoURL);
+    const securitySubmodelRepoURL = computed(() => navigationStore.getSecuritySubmodelRepoURL);
 
     /**
      * Fetches a list of all available Submodels (SMs).
@@ -27,10 +30,10 @@ export function useSMRepositoryClient() {
      * @returns {Promise<Array<any>>} A promise that resolves to an array of SMs.
      * An empty array is returned if the request fails or no SMs are found.
      */
-    async function fetchSmList(): Promise<Array<any>> {
+    async function fetchSmList(securitySubmodel: boolean = false): Promise<Array<any>> {
         const failResponse = [] as Array<any>;
 
-        let smRepoUrl = submodelRepoUrl.value.trim();
+        let smRepoUrl = securitySubmodel ? securitySubmodelRepoURL.value.trim() : submodelRepoUrl.value.trim();
         if (smRepoUrl === '') return failResponse;
         if (smRepoUrl.endsWith('/')) smRepoUrl = stripLastCharacter(smRepoUrl);
         if (!smRepoUrl.endsWith(endpointPath)) smRepoUrl += endpointPath;
@@ -267,7 +270,9 @@ export function useSMRepositoryClient() {
 
         if (smId === '') return failResponse;
 
-        let smRepoUrl = submodelRepoUrl.value.trim();
+        let smRepoUrl = authStore.getEditSecuritySubmodel
+            ? securitySubmodelRepoURL.value.trim()
+            : submodelRepoUrl.value.trim();
         if (smRepoUrl === '') return failResponse;
         if (smRepoUrl.endsWith('/')) smRepoUrl = stripLastCharacter(smRepoUrl);
         if (!smRepoUrl.endsWith(endpointPath)) smRepoUrl += endpointPath;
@@ -280,7 +285,9 @@ export function useSMRepositoryClient() {
     async function postSubmodel(submodel: aasTypes.Submodel): Promise<boolean> {
         const failResponse = false;
 
-        let smRepoUrl = submodelRepoUrl.value.trim();
+        let smRepoUrl = authStore.getEditSecuritySubmodel
+            ? securitySubmodelRepoURL.value.trim()
+            : submodelRepoUrl.value.trim();
         if (smRepoUrl === '') return failResponse;
         if (smRepoUrl.endsWith('/')) smRepoUrl = stripLastCharacter(smRepoUrl);
         if (!smRepoUrl.endsWith(endpointPath)) smRepoUrl += endpointPath;
@@ -303,7 +310,9 @@ export function useSMRepositoryClient() {
     async function putSubmodel(submodel: aasTypes.Submodel): Promise<boolean> {
         const failResponse = false;
 
-        let smRepoUrl = submodelRepoUrl.value.trim();
+        let smRepoUrl = authStore.getEditSecuritySubmodel
+            ? securitySubmodelRepoURL.value.trim()
+            : submodelRepoUrl.value.trim();
         if (smRepoUrl === '') return failResponse;
         if (smRepoUrl.endsWith('/')) smRepoUrl = stripLastCharacter(smRepoUrl);
         if (!smRepoUrl.endsWith(endpointPath)) smRepoUrl += endpointPath;
@@ -346,7 +355,9 @@ export function useSMRepositoryClient() {
     ): Promise<boolean> {
         const failResponse = false;
 
-        let smRepoUrl = submodelRepoUrl.value.trim();
+        let smRepoUrl = authStore.getEditSecuritySubmodel
+            ? securitySubmodelRepoURL.value.trim()
+            : submodelRepoUrl.value.trim();
         if (smRepoUrl === '') return failResponse;
         if (smRepoUrl.endsWith('/')) smRepoUrl = stripLastCharacter(smRepoUrl);
         if (!smRepoUrl.endsWith(endpointPath)) smRepoUrl += endpointPath;

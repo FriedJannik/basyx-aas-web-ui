@@ -28,11 +28,25 @@
 
 <script lang="ts" setup>
     import { computed } from 'vue';
+    import { useAuthStore } from '@/store/AuthStore';
+    import { useEnvStore } from '@/store/EnvironmentStore';
     import { useNavigationStore } from '@/store/NavigationStore';
 
     // Stores
+    const authStore = useAuthStore();
+    const envStore = useEnvStore();
     const navigationStore = useNavigationStore();
 
     // Computed Properties
-    const basyxComponents = computed(() => navigationStore.getBasyxComponents);
+    const isAuthEnabled = computed(() => authStore.getAuthEnabled || envStore.getBasicAuthActive);
+
+    const basyxComponents = computed(() => {
+        const components = navigationStore.getBasyxComponents;
+
+        // Filter out Security Submodel Component when auth is disabled
+        if (!isAuthEnabled.value) {
+            return Object.fromEntries(Object.entries(components).filter(([key]) => key !== 'SecuritySubmodelRepo'));
+        }
+        return components;
+    });
 </script>

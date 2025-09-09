@@ -31,10 +31,8 @@
             <v-card-text style="overflow-y: auto; height: calc(100svh - 170px)">
                 <template
                     v-if="
-                        ((selectedAAS && Object.keys(selectedAAS).length > 0) ||
-                            ['SMViewer', 'SMEditor'].includes(route.name as string)) &&
-                        selectedNode &&
-                        Object.keys(selectedNode).length > 0
+                        (selectedNode && Object.keys(selectedNode).length > 0) ||
+                        (['SMViewer', 'SMEditor'].includes(route.name as string) && route.query.path)
                     ">
                     <SubmodelElementView v-if="componentToShow === 'SMEView'" />
                     <SubmodelElementVisualization v-else-if="componentToShow === 'Visualization'" />
@@ -58,12 +56,13 @@
 </template>
 
 <script lang="ts" setup>
-    import { computed, ref } from 'vue';
-    import { useRoute } from 'vue-router';
+    import { computed, onMounted, ref, watch } from 'vue';
+    import { useRoute, useRouter } from 'vue-router';
     import { useAASStore } from '@/store/AASDataStore';
 
     // Vue Router
     const route = useRoute();
+    const router = useRouter();
 
     //Stores
     const aasStore = useAASStore();
@@ -71,7 +70,20 @@
     // Data
     const componentToShow = ref('SMEView');
 
+    // Watcher
+    watch(
+        () => componentToShow.value,
+        (newValue) => {
+            router.push({ query: { ...route.query, view: newValue } });
+        }
+    );
+
     // Computed Properties
     const selectedAAS = computed(() => aasStore.getSelectedAAS);
     const selectedNode = computed(() => aasStore.getSelectedNode);
+
+    onMounted(() => {
+        const view = String(route.query.view || 'SMEView');
+        componentToShow.value = view;
+    });
 </script>
