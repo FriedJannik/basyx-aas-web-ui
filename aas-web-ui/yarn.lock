@@ -1777,6 +1777,11 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
+basyx-typescript-sdk@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/basyx-typescript-sdk/-/basyx-typescript-sdk-1.0.2.tgz#ec7796fbf18e8027648975e0a2db64f3e9529369"
+  integrity sha512-cOrnl3v4ja4W0hmf8uKnKckI5gaL4ClNi4Yly8cg9Iwar8M/HrdkcpNatHAvvimCNriw0yHAM3+FFF6MYbcZ4g==
+
 bidi-js@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/bidi-js/-/bidi-js-1.0.3.tgz#6f8bcf3c877c4d9220ddf49b9bb6930c88f877d2"
