@@ -1,40 +1,38 @@
 <template>
+    <v-navigation-drawer absolute class="ma-4" rounded="lg" border style="height: calc(100vh - 134px)" persistent>
+        <v-list
+            active-class="border-thin border-primary border-opacity-25"
+            bg-color="transparent"
+            class="pt-2 ga-2 d-flex flex-column"
+            color="primary"
+            density="comfortable"
+            slim>
+            <v-list-item
+                v-for="(item, i) in getSteps"
+                :key="i"
+                border="thin surface"
+                rounded="lg"
+                :subtitle="item.subtitle"
+                :title="item.title"
+                :value="i"
+                class="mx-2"
+                style="cursor: default; user-select: none"
+                :disabled="item.disabled"
+                :active="model === i">
+                <template #prepend>
+                    <v-icon class="ml-n2">{{ item.icon }}</v-icon>
+                </template>
+            </v-list-item>
+        </v-list>
+    </v-navigation-drawer>
     <v-container class="pa-md-6" fluid>
-        <v-navigation-drawer
-            absolute
-            class="ma-4"
-            rounded="lg"
+        <v-card
             border
-            rail
-            expand-on-hover
-            style="height: calc(100vh - 134px)"
-            persistent>
-            <v-list
-                active-class="border-thin border-primary border-opacity-25"
-                bg-color="transparent"
-                class="pt-2 ga-2 d-flex flex-column"
-                color="primary"
-                density="comfortable"
-                slim>
-                <v-list-item
-                    v-for="(item, i) in getSteps"
-                    :key="i"
-                    border="thin surface"
-                    rounded="lg"
-                    :subtitle="item.subtitle"
-                    :title="item.title"
-                    :value="i"
-                    class="mx-2"
-                    style="cursor: default; user-select: none"
-                    :disabled="item.disabled"
-                    :active="model === i">
-                    <template #prepend>
-                        <v-icon class="ml-n2">{{ item.icon }}</v-icon>
-                    </template>
-                </v-list-item>
-            </v-list>
-        </v-navigation-drawer>
-        <v-card border class="pa-4 mt-n2" flat rounded="lg" align="center">
+            class="pa-4 mt-n2 overflow-y-auto"
+            flat
+            rounded="lg"
+            align="center"
+            style="height: calc(100vh - 134px)">
             <div>
                 <div class="text-h6 font-weight-bold">{{ settings[model].title }}</div>
                 <div class="text-body-2 text-medium-emphasis">
@@ -56,6 +54,30 @@
                 <v-spacer></v-spacer>
             </template>
         </v-card>
+        <v-card
+            v-for="step in submodelTemplateSpecificSteps"
+            :key="step.title"
+            border
+            class="pa-4 mt-n2 overflow-y-auto"
+            flat
+            rounded="lg"
+            style="height: calc(100vh - 134px)"
+            align="center">
+            <v-card-title>{{ step.title }}</v-card-title>
+            <v-card-subtitle>{{ step.subtitle }}</v-card-subtitle>
+            <v-card-subtitle>Fields marked with an asterisk (*) are mandatory</v-card-subtitle>
+            <v-card-text class="text-start">
+                <v-list dense>
+                    <v-list-item v-for="sme in step.stepData.value" :key="sme.idShort">
+                        <NestedInputFieldGenerator :is-mandatory="isMandatory" :sme="sme" :level="1" />
+                    </v-list-item>
+                </v-list>
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer />
+                <v-btn color="success" variant="tonal">Next</v-btn>
+            </v-card-actions>
+        </v-card>
     </v-container>
     <v-btn
         style="position: fixed; bottom: 64px; right: 16px; z-index: 999999999"
@@ -65,9 +87,15 @@
 
 <script lang="ts" setup>
     //----- Imports -----//
-    import { ModellingKind, ModelType, type Submodel } from '@aas-core-works/aas-core3.0-typescript/types';
+    import {
+        ModellingKind,
+        ModelType,
+        type Submodel,
+        SubmodelElementCollection,
+    } from '@aas-core-works/aas-core3.0-typescript/types';
     import { Configuration, SubmodelRepositoryClient } from 'basyx-typescript-sdk';
     import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+    import NestedInputFieldGenerator from './NestedInputFieldGenerator.vue';
 
     //----- Component Options -----//
     defineOptions({
@@ -82,6 +110,7 @@
         subtitle: string;
         icon: string;
         addBtn: boolean;
+        stepData: any;
         disabled?: boolean;
     }
 
@@ -96,6 +125,7 @@
             icon: 'mdi-cog-outline',
             addBtn: false,
             disabled: false,
+            stepData: null,
         },
     ]);
     const submodelTemplateSpecificSteps = ref<Step[]>([]);
@@ -139,15 +169,32 @@
     });
 
     //----- Methods -----//
+    function isMandatory(submodelElement: any): boolean {
+        return (
+            submodelElement.qualifiers?.some(
+                (qualifier: any) =>
+                    qualifier.type.includes('Cardinality') &&
+                    (qualifier.value === 'One' || qualifier.value === 'OneToMany')
+            ) ?? false
+        );
+    }
+
     function getStepsForCurrentSubmodelTemplate(): Step[] {
         let steps: Step[] = [];
         let hasNonCollectionElements = false;
-
+        let nonCollectionElements = new SubmodelElementCollection();
+        nonCollectionElements.idShort = 'General Element Collection';
         preloadedSMT.value?.submodelElements?.forEach((submodelElement) => {
             if (submodelElement.modelType() !== ModelType.SubmodelElementCollection) {
                 hasNonCollectionElements = true;
+                if (!nonCollectionElements.value) {
+                    nonCollectionElements.value = [];
+                }
+                nonCollectionElements.value.push(submodelElement);
             }
         });
+
+        console.warn(`[DEBUG] Non-collection elements:`, nonCollectionElements);
 
         if (hasNonCollectionElements) {
             steps.push({
@@ -156,15 +203,12 @@
                 icon: 'mdi-debug-step-into',
                 addBtn: false,
                 disabled: true,
+                stepData: nonCollectionElements,
             });
         }
 
         preloadedSMT.value?.submodelElements?.forEach((submodelElement) => {
-            const mandatory = submodelElement?.qualifiers?.some(
-                (qualifier) =>
-                    qualifier.type.includes('Cardinality') &&
-                    (qualifier.value === 'One' || qualifier.value === 'OneToMany')
-            );
+            const mandatory = isMandatory(submodelElement);
 
             if (submodelElement.modelType() === ModelType.SubmodelElementCollection) {
                 steps.push({
@@ -173,7 +217,9 @@
                     icon: 'mdi-debug-step-into',
                     addBtn: false,
                     disabled: true,
+                    stepData: submodelElement,
                 });
+                console.warn(`[DEBUG] Elements:`, nonCollectionElements);
             }
         });
 
