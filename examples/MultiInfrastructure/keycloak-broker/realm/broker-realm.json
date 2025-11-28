@@ -1,0 +1,168 @@
+{
+  "realm": "BrokerRealm",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "basyx-admin",
+        "description": "BaSyx Administrator"
+      },
+      {
+        "name": "admin",
+        "description": "BaSyx Administrator (Real)"
+      },
+      {
+        "name": "basyx-user",
+        "description": "BaSyx User"
+      },
+      {
+        "name": "basyx-reader",
+        "description": "BaSyx Reader"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "broker.admin",
+      "enabled": true,
+      "firstName": "Broker",
+      "lastName": "Admin",
+      "email": "broker.admin@example.com",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["basyx-admin", "admin"]
+    },
+    {
+      "username": "broker.user",
+      "enabled": true,
+      "firstName": "Broker",
+      "lastName": "User",
+      "email": "broker.user@example.com",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["basyx-user"]
+    },
+    {
+      "username": "service-account-workstation-1",
+      "enabled": true,
+      "serviceAccountClientId": "workstation-1",
+      "realmRoles": ["admin"]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "broker",
+      "secret": "broker-secret",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "https://keycloak.trameri.basyx.localhost/realms/BaSyx/broker/broker/endpoint",
+        "https://keycloak.eurogoodies.basyx.localhost/realms/BaSyx/broker/broker/endpoint",
+        "https://keycloak.trameri.basyx.localhost/*",
+        "https://keycloak.eurogoodies.basyx.localhost/*"
+      ],
+      "webOrigins": ["+"],
+      "enabled": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false
+    },
+    {
+      "clientId": "basyx-web-ui",
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "https://aasgui.basyx.localhost/*",
+        "http://localhost:3000/*"
+      ],
+      "webOrigins": [
+        "https://aasgui.basyx.localhost",
+        "http://localhost:3000",
+        "+"
+      ],
+      "enabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "frontchannelLogout": true,
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:3000/*##https://aasgui.basyx.localhost/*"
+      }
+    },
+    {
+      "clientId": "workstation-1",
+      "name": "Workstation 1",
+      "secret": "nY0mjyECF60DGzNmQUjL81XurSl8etom",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "redirectUris": ["/*"],
+      "webOrigins": ["/*"],
+      "enabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": true,
+      "frontchannelLogout": true
+    }
+  ],
+  "identityProviders": [
+    {
+      "alias": "trameri",
+      "displayName": "Transinet",
+      "providerId": "keycloak-oidc",
+      "enabled": true,
+      "trustEmail": true,
+      "storeToken": true,
+      "addReadTokenRoleOnCreate": false,
+      "authenticateByDefault": false,
+      "linkOnly": false,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "authorizationUrl": "https://keycloak.trameri.basyx.localhost/realms/Trameri/protocol/openid-connect/auth",
+        "tokenUrl": "https://keycloak.trameri.basyx.localhost/realms/Trameri/protocol/openid-connect/token",
+        "logoutUrl": "https://keycloak.trameri.basyx.localhost/realms/Trameri/protocol/openid-connect/logout",
+        "userInfoUrl": "https://keycloak.trameri.basyx.localhost/realms/Trameri/protocol/openid-connect/userinfo",
+        "clientId": "broker-client-trameri",
+        "clientSecret": "broker-secret-trameri",
+        "issuer": "https://keycloak.trameri.basyx.localhost/realms/Trameri",
+        "defaultScope": "openid profile email",
+        "syncMode": "IMPORT"
+      }
+    },
+    {
+      "alias": "eurogoodies",
+      "displayName": "EuroGoodies",
+      "providerId": "keycloak-oidc",
+      "enabled": true,
+      "trustEmail": true,
+      "storeToken": true,
+      "addReadTokenRoleOnCreate": false,
+      "authenticateByDefault": false,
+      "linkOnly": false,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "authorizationUrl": "https://keycloak.eurogoodies.basyx.localhost/realms/EuroGoodies/protocol/openid-connect/auth",
+        "tokenUrl": "https://keycloak.eurogoodies.basyx.localhost/realms/EuroGoodies/protocol/openid-connect/token",
+        "logoutUrl": "https://keycloak.eurogoodies.basyx.localhost/realms/EuroGoodies/protocol/openid-connect/logout",
+        "userInfoUrl": "https://keycloak.eurogoodies.basyx.localhost/realms/EuroGoodies/protocol/openid-connect/userinfo",
+        "clientId": "broker-client-EuroGoodies",
+        "clientSecret": "broker-secret-EuroGoodies",
+        "issuer": "https://keycloak.eurogoodies.basyx.localhost/realms/EuroGoodies",
+        "defaultScope": "openid profile email",
+        "syncMode": "IMPORT"
+      }
+    }
+  ]
+}

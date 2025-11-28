@@ -1,0 +1,8 @@
+FROM eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
+USER root
+COPY certs/*.crt /tmp/
+RUN for cert in /tmp/*.crt; do \
+      alias=$(basename "$cert" .crt); \
+      keytool -import -trustcacerts -noprompt -alias "$alias" -file "$cert" -cacerts -storepass changeit || true; \
+    done && rm /tmp/*.crt
+USER 1000

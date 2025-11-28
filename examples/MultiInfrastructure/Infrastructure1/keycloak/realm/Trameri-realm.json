@@ -1,6 +1,6 @@
 {
   "id" : "bcb69552-bf11-4249-a3eb-d0c3ab54a570",
-  "realm" : "BaSyx",
+  "realm" : "Trameri",
   "notBefore" : 0,
   "defaultSignatureAlgorithm" : "RS256",
   "revokeRefreshToken" : false,
@@ -819,7 +819,7 @@
   }, {
     "id" : "f48119f5-7dff-46af-b9db-3ee96cd52550",
     "username" : "basyx.creator",
-    "firstName" : "BaSyx",
+    "firstName" : "Trameri",
     "lastName" : "creator",
     "emailVerified" : false,
     "createdTimestamp" : 1702032555719,
@@ -841,7 +841,7 @@
   }, {
     "id" : "40858874-f6e7-48c8-9667-d585d7c27b57",
     "username" : "basyx.deleter",
-    "firstName" : "BaSyx",
+    "firstName" : "Trameri",
     "lastName" : "Deleter",
     "emailVerified" : false,
     "createdTimestamp" : 1702032602188,
@@ -973,7 +973,7 @@
   }, {
     "id" : "abfaa545-3c2f-4ac6-9f41-7c166613ea35",
     "username" : "basyx.reader",
-    "firstName" : "BaSyx",
+    "firstName" : "Trameri",
     "lastName" : "Reader",
     "emailVerified" : false,
     "createdTimestamp" : 1702032528855,
@@ -1174,7 +1174,7 @@
   }, {
     "id" : "44f291ad-a0de-4035-9938-a092faf810b5",
     "username" : "basyx.updater",
-    "firstName" : "BaSyx",
+    "firstName" : "Trameri",
     "lastName" : "Updater",
     "emailVerified" : false,
     "createdTimestamp" : 1702032579778,
@@ -1450,12 +1450,12 @@
     "clientId" : "account",
     "name" : "${client_account}",
     "rootUrl" : "${authBaseUrl}",
-    "baseUrl" : "/realms/BaSyx/account/",
+    "baseUrl" : "/realms/Trameri/account/",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
-    "redirectUris" : [ "/realms/BaSyx/account/*" ],
+    "redirectUris" : [ "/realms/Trameri/account/*" ],
     "webOrigins" : [ ],
     "notBefore" : 0,
     "bearerOnly" : false,
@@ -1480,12 +1480,12 @@
     "clientId" : "account-console",
     "name" : "${client_account-console}",
     "rootUrl" : "${authBaseUrl}",
-    "baseUrl" : "/realms/BaSyx/account/",
+    "baseUrl" : "/realms/Trameri/account/",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
-    "redirectUris" : [ "/realms/BaSyx/account/*" ],
+    "redirectUris" : [ "/realms/Trameri/account/*" ],
     "webOrigins" : [ ],
     "notBefore" : 0,
     "bearerOnly" : false,
@@ -1545,7 +1545,7 @@
   }, {
     "id" : "3fb3e5e5-dbd8-4d51-b964-746c5b2181a4",
     "clientId" : "basyx-client-api",
-    "name" : "BaSyx Client Api",
+    "name" : "Trameri Client Api",
     "description" : "",
     "rootUrl" : "http://localhost:8081",
     "adminUrl" : "http://localhost:8081",
@@ -1630,9 +1630,9 @@
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
     "redirectUris" : [ 
-        "http://aasgui.basyx.localhost/*", "http://localhost:3000/*" ],
+        "https://aasgui.basyx.localhost/*", "http://localhost:3000/*" ],
     "webOrigins" : [ 
-        "http://aasgui.basyx.localhost", "http://localhost:3000" ],
+        "https://aasgui.basyx.localhost", "http://localhost:3000" ],
     "notBefore" : 0,
     "bearerOnly" : false,
     "consentRequired" : false,
@@ -1646,7 +1646,7 @@
     "attributes" : {
       "oidc.ciba.grant.enabled" : "false",
       "backchannel.logout.session.required" : "true",
-      "post.logout.redirect.uris": "http://localhost:3000/*##http://aasgui.basyx.localhost/*",
+      "post.logout.redirect.uris": "http://localhost:3000/*##https://aasgui.basyx.localhost/*",
       "oauth2.device.authorization.grant.enabled" : "true",
       "display.on.consent.screen" : "false",
       "backchannel.logout.revoke.offline.tokens" : "false"
@@ -1717,12 +1717,12 @@
     "clientId" : "security-admin-console",
     "name" : "${client_security-admin-console}",
     "rootUrl" : "${authAdminUrl}",
-    "baseUrl" : "/admin/BaSyx/console/",
+    "baseUrl" : "/admin/Trameri/console/",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
-    "redirectUris" : [ "/admin/BaSyx/console/*" ],
+    "redirectUris" : [ "/admin/Trameri/console/*" ],
     "webOrigins" : [ "+" ],
     "notBefore" : 0,
     "bearerOnly" : false,
@@ -1848,6 +1848,43 @@
       "scopes" : [ ],
       "decisionStrategy" : "UNANIMOUS"
     }
+  }, {
+    "id" : "b8f91c4e-4895-4562-9d8d-87cf3b1c7c09",
+    "clientId" : "broker-client-trameri",
+    "name" : "Broker Client for Trameri",
+    "description" : "Client for Keycloak Broker to authenticate against Trameri",
+    "rootUrl" : "",
+    "adminUrl" : "",
+    "baseUrl" : "",
+    "surrogateAuthRequired" : false,
+    "enabled" : true,
+    "alwaysDisplayInConsole" : false,
+    "clientAuthenticatorType" : "client-secret",
+    "secret" : "broker-secret-trameri",
+    "redirectUris" : [ "https://keycloak-broker.basyx.localhost/*", "https://keycloak-broker.basyx.localhost/realms/BrokerRealm/broker/trameri/endpoint" ],
+    "webOrigins" : [ "+" ],
+    "notBefore" : 0,
+    "bearerOnly" : false,
+    "consentRequired" : false,
+    "standardFlowEnabled" : true,
+    "implicitFlowEnabled" : false,
+    "directAccessGrantsEnabled" : true,
+    "serviceAccountsEnabled" : true,
+    "publicClient" : false,
+    "frontchannelLogout" : true,
+    "protocol" : "openid-connect",
+    "attributes" : {
+      "oidc.ciba.grant.enabled" : "false",
+      "backchannel.logout.session.required" : "true",
+      "post.logout.redirect.uris" : "+",
+      "oauth2.device.authorization.grant.enabled" : "false",
+      "backchannel.logout.revoke.offline.tokens" : "false"
+    },
+    "authenticationFlowBindingOverrides" : { },
+    "fullScopeAllowed" : true,
+    "nodeReRegistrationTimeout" : -1,
+    "defaultClientScopes" : [ "web-origins", "acr", "roles", "profile", "email" ],
+    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   } ],
   "clientScopes" : [ {
     "id" : "e0f355da-f9ff-4104-b305-043b0188747b",
@@ -2335,8 +2372,90 @@
   "enabledEventTypes" : [ ],
   "adminEventsEnabled" : false,
   "adminEventsDetailsEnabled" : false,
-  "identityProviders" : [ ],
-  "identityProviderMappers" : [ ],
+  "identityProviders" : [ {
+    "alias" : "broker",
+    "displayName" : "Identity Broker",
+    "providerId" : "keycloak-oidc",
+    "enabled" : true,
+    "updateProfileFirstLogin" : false,
+    "trustEmail" : false,
+    "storeToken" : true,
+    "firstBrokerLoginFlowAlias" : "first broker login",
+    "config" : {
+      "authorizationUrl" : "https://keycloak-broker.basyx.localhost/realms/BrokerRealm/protocol/openid-connect/auth",
+      "tokenUrl" : "https://keycloak-broker.basyx.localhost/realms/BrokerRealm/protocol/openid-connect/token",
+      "logoutUrl" : "https://keycloak-broker.basyx.localhost/realms/BrokerRealm/protocol/openid-connect/logout",
+      "userInfoUrl" : "https://keycloak-broker.basyx.localhost/realms/BrokerRealm/protocol/openid-connect/userinfo",
+      "clientId" : "broker",
+      "clientSecret" : "broker-secret",
+      "issuer" : "https://keycloak-broker.basyx.localhost/realms/BrokerRealm",
+      "defaultScope" : "openid profile email",
+      "syncMode" : "IMPORT"
+    }
+  } ],
+  "identityProviderMappers" : [ {
+    "name" : "broker-username-mapper",
+    "identityProviderAlias" : "broker",
+    "identityProviderMapper" : "oidc-username-idp-mapper",
+    "config" : {
+      "syncMode" : "INHERIT",
+      "template" : "${CLAIM.preferred_username}"
+    }
+  }, {
+    "name" : "broker-email-mapper",
+    "identityProviderAlias" : "broker",
+    "identityProviderMapper" : "oidc-user-attribute-idp-mapper",
+    "config" : {
+      "syncMode" : "INHERIT",
+      "claim" : "email",
+      "user.attribute" : "email"
+    }
+  }, {
+    "name" : "broker-first-name-mapper",
+    "identityProviderAlias" : "broker",
+    "identityProviderMapper" : "oidc-user-attribute-idp-mapper",
+    "config" : {
+      "syncMode" : "INHERIT",
+      "claim" : "given_name",
+      "user.attribute" : "firstName"
+    }
+  }, {
+    "name" : "broker-last-name-mapper",
+    "identityProviderAlias" : "broker",
+    "identityProviderMapper" : "oidc-user-attribute-idp-mapper",
+    "config" : {
+      "syncMode" : "INHERIT",
+      "claim" : "family_name",
+      "user.attribute" : "lastName"
+    }
+  }, {
+    "name" : "broker-role-mapper",
+    "identityProviderAlias" : "broker",
+    "identityProviderMapper" : "oidc-role-idp-mapper",
+    "config" : {
+      "syncMode" : "INHERIT",
+      "claim" : "realm_access.roles",
+      "claim.value" : "basyx-admin"
+    }
+  }, {
+    "name" : "broker-user-role-mapper",
+    "identityProviderAlias" : "broker",
+    "identityProviderMapper" : "oidc-role-idp-mapper",
+    "config" : {
+      "syncMode" : "INHERIT",
+      "claim" : "realm_access.roles",
+      "claim.value" : "basyx-user"
+    }
+  }, {
+    "name" : "broker-reader-role-mapper",
+    "identityProviderAlias" : "broker",
+    "identityProviderMapper" : "oidc-role-idp-mapper",
+    "config" : {
+      "syncMode" : "INHERIT",
+      "claim" : "realm_access.roles",
+      "claim.value" : "basyx-reader"
+    }
+  } ],
   "components" : {
     "org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy" : [ {
       "id" : "f44d4d8f-cc39-4467-bb75-889f8d4c9b90",

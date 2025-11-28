@@ -1,8 +1,25 @@
 include:
   - ./Infrastructure1/docker-compose-infra1.yml
   - ./Infrastructure2/docker-compose-infra2.yml
+  - ./Infrastructure3/docker-compose-infra3.yml
 
 services:
+  # Reverse proxy for all infrastructures
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:1.6.0-alpine
+    container_name: proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+    environment:
+      DEFAULT_HOST: aasgui.trameri.basyx.localhost
+      ENABLE_IPV6: "false"
+    networks:
+      - multiple-infrastructures
   # Common MongoDB service for multiple infrastructures
   mongo:
     image: mongo:5.0
@@ -19,28 +36,62 @@ services:
     networks:
       - multiple-infrastructures
 
+  # Keycloak acting as Identity Broker for infrastructures
+  keycloak-broker:
+    build:
+      context: .
+      dockerfile: keycloak-broker/Dockerfile
+    container_name: keycloak-broker
+    extra_hosts:
+      - "keycloak-broker.basyx.localhost:host-gateway"
+      - "keycloak.trameri.basyx.localhost:host-gateway"
+      - "keycloak.eurogoodies.basyx.localhost:host-gateway"
+    environment:
+      VIRTUAL_HOST: keycloak-broker.basyx.localhost
+      VIRTUAL_PORT: "8080"
+      VIRTUAL_PROTO: http
+      KC_HOSTNAME: keycloak-broker.basyx.localhost
+      KC_HOSTNAME_STRICT: "false"
+      KC_PROXY: edge
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: keycloak-admin
+      KC_HEALTH_ENABLED: "true"
+      KC_IMPORT: /opt/keycloak/data/import/
+    command: ["start-dev", "--import-realm"]
+    restart: unless-stopped
+    ports:
+      - 9099:8080
+    volumes:
+      - ./keycloak-broker/realm:/opt/keycloak/data/import
+    networks:
+      - multiple-infrastructures
+
   # Common AAS Web UI service for multiple infrastructures
   aas-web-ui:
     image: eclipsebasyx/aas-gui:SNAPSHOT
     container_name: aas-web-ui
     extra_hosts:
-      - "keycloak.basyx.localhost:host-gateway"
+      - "keycloak-broker.basyx.localhost:host-gateway"
     ports:
       - '3000:3000'
     environment:
       VIRTUAL_HOST: aasgui.basyx.localhost
       VIRTUAL_PORT: "3000"
       # Preconfigured default for infrastructure 1
-      AAS_REGISTRY_PATH: http://aasreg.basyx.localhost/shell-descriptors
-      SUBMODEL_REGISTRY_PATH: http://smreg.basyx.localhost/submodel-descriptors
-      AAS_REPO_PATH: http://aasenv.basyx.localhost/shells
-      SUBMODEL_REPO_PATH: http://aasenv.basyx.localhost/submodels
-      CD_REPO_PATH: http://aasenv.basyx.localhost/concept-descriptions
-      AAS_DISCOVERY_PATH: http://discovery.basyx.localhost/lookup/shells
-      KEYCLOAK_URL: http://keycloak.basyx.localhost
-      KEYCLOAK_REALM: BaSyx
+      AAS_REGISTRY_PATH: https://aasreg.trameri.basyx.localhost/shell-descriptors
+      SUBMODEL_REGISTRY_PATH: https://smreg.trameri.basyx.localhost/submodel-descriptors
+      AAS_REPO_PATH: https://aasenv.trameri.basyx.localhost/shells
+      SUBMODEL_REPO_PATH: https://aasenv.trameri.basyx.localhost/submodels
+      CD_REPO_PATH: https://aasenv.trameri.basyx.localhost/concept-descriptions
+      AAS_DISCOVERY_PATH: https://discovery.trameri.basyx.localhost/lookup/shells
+      # Broker Authentication (enabled for cross-infrastructure auth)
+      KEYCLOAK_URL: https://keycloak.trameri.basyx.localhost
+      KEYCLOAK_REALM: Trameri
       KEYCLOAK_CLIENT_ID: basyx-web-ui
     restart: unless-stopped
+    depends_on:
+      keycloak-broker:
+        condition: service_started
     networks:
       - multiple-infrastructures
 
@@ -52,12 +103,12 @@ services:
     ports:
       - '3001:3000'
     environment:
-      AAS_REGISTRY_PATH: http://localhost:9082/shell-descriptors
-      SUBMODEL_REGISTRY_PATH: http://localhost:9083/submodel-descriptors
-      AAS_REPO_PATH: http://localhost:9081/shells
-      SUBMODEL_REPO_PATH: http://localhost:9081/submodels
-      CD_REPO_PATH: http://localhost:9081/concept-descriptions
-      AAS_DISCOVERY_PATH: http://localhost:9084/lookup/shells
+      AAS_REGISTRY_PATH: https://aasreg.trameri.basyx.localhost
+      SUBMODEL_REGISTRY_PATH: https://smreg.trameri.basyx.localhost
+      AAS_REPO_PATH: https://aasenv.trameri.basyx.localhost
+      SUBMODEL_REPO_PATH: hhttps://aasenv.trameri.basyx.localhost
+      CD_REPO_PATH: https://aasenv.trameri.basyx.localhost
+      AAS_DISCOVERY_PATH: hhttps://discovery.trameri.basyx.localhost
     restart: unless-stopped
 
 networks:
