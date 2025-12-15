@@ -20,6 +20,7 @@ services:
       ENABLE_IPV6: "false"
     networks:
       - multiple-infrastructures
+      
   # Common MongoDB service for multiple infrastructures
   mongo:
     image: mongo:5.0
@@ -68,7 +69,7 @@ services:
 
   # Common AAS Web UI service for multiple infrastructures
   aas-web-ui:
-    image: eclipsebasyx/aas-gui:SNAPSHOT
+    image: eclipsebasyx/aas-gui:v2-251212
     container_name: aas-web-ui
     extra_hosts:
       - "keycloak-broker.basyx.localhost:host-gateway"
@@ -95,21 +96,6 @@ services:
     networks:
       - multiple-infrastructures
 
-  aas-web-ui-2:
-    image: eclipsebasyx/aas-gui:SNAPSHOT
-    container_name: aas-web-ui-2
-    extra_hosts:
-      - "keycloak.basyx.localhost:host-gateway"
-    ports:
-      - '3001:3000'
-    environment:
-      AAS_REGISTRY_PATH: https://aasreg.trameri.basyx.localhost
-      SUBMODEL_REGISTRY_PATH: https://smreg.trameri.basyx.localhost
-      AAS_REPO_PATH: https://aasenv.trameri.basyx.localhost
-      SUBMODEL_REPO_PATH: hhttps://aasenv.trameri.basyx.localhost
-      CD_REPO_PATH: https://aasenv.trameri.basyx.localhost
-      AAS_DISCOVERY_PATH: hhttps://discovery.trameri.basyx.localhost
-    restart: unless-stopped
 
 networks:
   multiple-infrastructures:
